@@ -26,11 +26,6 @@ export default function DemoPage() {
   const [audioError, setAudioError] = useState<string | null>(null);
   const [processingStatus, setProcessingStatus] = useState<string>("");
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setFile(event.target.files[0]);
-    }
-  };
 
   const handleUpload = () => {
     return (
@@ -97,17 +92,6 @@ export default function DemoPage() {
       );
     } finally {
       setLoading(false);
-    }
-  };
-  
-  // Add this helper function to handle file uploads
-  const uploadAudioFile = async (file: File) => {
-    try {
-    const response = await filestackClient.upload(file);
-    return response.url;
-    } catch (error) {
-    console.error('Error uploading file:', error);
-    throw new Error('Failed to upload file');
     }
   };
 

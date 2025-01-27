@@ -63,26 +63,34 @@ export default function DemoPage() {
   
     setLoading(true);
     try {
-      console.log("Submitting request with:", {
-        file: file.url,
-        artist,
-        lyrics
-      });
-
       const response = await axios.post("/api/process-music", {
         file: file.url,
         artist: artist,
         lyrics: lyrics,
       });
 
-      console.log("API Response:", response.data);
-
       if (response.data.error) {
         throw new Error(response.data.error);
       }
-  
-      setResultUrl(response.data.output);
-      setAudioError(null);
+
+      const predictionId = response.data.predictionId;
+      
+      // Poll for the result
+      while (true) {
+        const statusResponse = await axios.get(`/api/check-prediction?id=${predictionId}`);
+        const prediction = statusResponse.data;
+
+        if (prediction.status === "succeeded") {
+          setResultUrl(prediction.output);
+          break;
+        } else if (prediction.status === "failed") {
+          throw new Error(prediction.error || "Prediction failed");
+        }
+
+        setProcessingStatus(`Processing... (${prediction.status})`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+
     } catch (error) {
       console.error("Error details:", error);
       setAudioError(

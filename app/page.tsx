@@ -5,6 +5,12 @@ import { Card } from "@/components/ui/card";
 import { MicVocal, Sparkles, Image, Wand2, ChevronRight } from "lucide-react";
 import Link from 'next/link';
 
+const artistExamples = [
+  { image: "/artist1.jpg", name: "ye", displayName: "Ye" },
+  { image: "/artist2.jpg", name: "taylor", displayName: "Taylor Swift" },
+  { image: "/freddie2.jpeg", name: "freddie", displayName: "Freddie Mercury" }
+];
+
 export default function Home() {
   return (
     <main className="min-h-screen">
@@ -70,22 +76,20 @@ export default function Home() {
             See the Magic in Action
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              "/artist1.jpg",
-              "/artist2.jpg",
-              "/freddie2.jpeg"
-            ].map((img, index) => (
+            {artistExamples.map((artist, index) => (
               <div key={index} className="relative group overflow-hidden rounded-xl">
                 <img
-                  src={`${img}?auto=format&fit=crop&w=800&q=80`}
-                  alt={`Example ${index + 1}`}
+                  src={`${artist.image}?auto=format&fit=crop&w=800&q=80`}
+                  alt={artist.displayName}
                   className="w-full h-[400px] object-cover transition-transform duration-300 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <Button variant="secondary" className="w-full">
-                      Try This Artist
-                    </Button>
+                    <Link href={`/demo?artist=${artist.name}`}>
+                      <Button variant="secondary" className="w-full">
+                        Try {artist.displayName}
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </div>

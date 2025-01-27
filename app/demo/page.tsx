@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { ChevronRight, UploadCloud, Music, Loader2, ArrowLeft } from "lucide-rea
 import Link from "next/link";
 import { CldUploadWidget } from 'next-cloudinary';
 import { voiceReferences } from '@/lib/voice-config';
+import { useSearchParams } from 'next/navigation';
 
 interface UploadedFile {
   url: string;
@@ -25,7 +26,14 @@ export default function DemoPage() {
   const [isAudioLoading, setIsAudioLoading] = useState(false);
   const [audioError, setAudioError] = useState<string | null>(null);
   const [processingStatus, setProcessingStatus] = useState<string>("");
+  const searchParams = useSearchParams();
 
+  useEffect(() => {
+    const artistParam = searchParams.get('artist');
+    if (artistParam && voiceReferences[artistParam as keyof typeof voiceReferences]) {
+      setArtist(voiceReferences[artistParam as keyof typeof voiceReferences]);
+    }
+  }, [searchParams]);
 
   const handleUpload = () => {
     return (
@@ -87,7 +95,7 @@ export default function DemoPage() {
           throw new Error(prediction.error || "Prediction failed");
         }
 
-        setProcessingStatus(`Processing... (${prediction.status})`);
+        setProcessingStatus(`Please allow up to 3 minutes... (${prediction.status})`);
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
 
